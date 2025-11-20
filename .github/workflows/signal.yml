@@ -1,26 +1,25 @@
-name: Send Signals
+name: Send Signals Every Minute
 
 on:
   schedule:
-    - cron: "50 3 * * 1-5"  
-    - cron: "30 6 * * 1-5"  
-    - cron: "0 9 * * 1-5"   
+    - cron: "* * * * *"   # Runs every 1 minute
   workflow_dispatch:
 
 jobs:
-  run:
+  send:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
 
-      - name: Setup Python
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install dependencies
-        run: pip install python-telegram-bot requests
+        run: pip install requests python-telegram-bot==13.15
 
       - name: Run script
         env:
