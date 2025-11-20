@@ -3,8 +3,8 @@ import requests
 import telegram
 from datetime import datetime
 
-BOT_TOKEN = "8235242533:AAHxgo3Z2RycfHLu7uWpx_RuowzEIzS1npU"
-CHAT_ID = "-1003330906337"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 def send_signal():
     url = "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050"
