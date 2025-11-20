@@ -1,0 +1,29 @@
+name: Send Signals
+
+on:
+  schedule:
+    - cron: "50 3 * * 1-5"  
+    - cron: "30 6 * * 1-5"  
+    - cron: "0 9 * * 1-5"   
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install python-telegram-bot requests
+
+      - name: Run script
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python script.py
