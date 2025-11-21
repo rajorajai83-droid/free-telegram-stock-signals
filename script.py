@@ -7,19 +7,31 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 def send_signal():
-    url = "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        url = "https://www.nseindia.com/api/equity-stockIndices?index=NIFTY%2050"
+        headers = {"User-Agent": "Mozilla/5.0"}
 
-    data = requests.get(url, headers=headers).json()
-    stocks = data["data"][:3]
+        r = requests.get(url, headers=headers)
+        r.raise_for_status()
 
-    message = "📈 *Free Intraday Signals — India Market*\n"
-    message += f"🕒 {datetime.now().strftime('%I:%M %p')}\n\n"
+        data = r.json()
 
-    for s in stocks:
-        message += f"• {s['symbol']} — {s['lastPrice']} ({s['pChange']}%)\n"
+        if "data" not in data or len(data["data"]) == 0:
+            message = "⚠️ NSE data unavailable right now.\nTry again later."
+        else:
+            stocks = data["data"][:3]
 
-    bot = telegram.Bot(token=BOT_TOKEN)
-    bot.send_message(chat_id=CHAT_ID, text=message, parse_mode="Markdown")
+            message = "📈 *Free Intraday Signals — India Market*\n"
+            message += f"🕒 {datetime.now().strftime('%I:%M %p')}\n\n"
+
+            for s in stocks:
+                message += f"• {s['symbol']} — {s['lastPrice']} ({s['pChange']}%)\n"
+
+        bot = telegram.Bot(token=BOT_TOKEN)
+        bot.send_message(chat_id=CHAT_ID, text=message, parse_mode="Markdown")
+
+    except Exception as e:
+        bot = telegram.Bot(token=BOT_TOKEN)
+        bot.send_message(chat_id=CHAT_ID, text=f"❌ Error: {e}")
 
 send_signal()
